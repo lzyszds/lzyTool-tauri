@@ -1,0 +1,60 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devPath": "http://localhost:2048",
+    "distDir": "../dist",
+    "withGlobalTauri": false
+  },
+  "package": {
+    "productName": "lzyTool",
+    "version": "0.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "com.tauri.build",
+      "targets": "all"
+    },
+    "security": {
+      "csp": null
+    },
+    "updater": {
+      "active": false
+    },
+    "windows": [
+      {
+        "fullscreen": "是否全屏",
+        "fullscreen": false,
+        "resizable": "是否可调整大小",
+        "resizable": true,
+        "title": "软件标题",
+        "title": "lzyTool",
+        "width": 1920,
+        "height": 900,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": "是否居中",
+        "center": true,
+        "decorations": "是否显示边框",
+        "decorations": true,
+        "transparent": "是否透明",
+        "transparent": true
+      }
+    ]
+  }
+}
