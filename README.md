@@ -1,6 +1,6 @@
 # Tauri + Vue3 + Vite + TypeScript
 
-本文介绍如何使用 Tauri + Vue3 + Vite + TypeScript 搭建一个现代化的桌面应用程序。
+本文介绍如何使用 Tauri + Vue3 + Vite + TypeScript 搭建一个现代化的桌面应用程序。 看看更新没有
 
 这个模板应该有助于您开始在Vite中使用Vue 3和TypeScript进行开发。该模板使用Vue 3＜script setup＞SFC，请查看脚本设置文档以了解更多信息。
 
