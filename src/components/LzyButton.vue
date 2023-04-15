@@ -55,7 +55,7 @@ button {
   border-radius: 50px;
   position: relative;
   overflow: hidden;
-  transition: all .5s ease;
+  transition: transform .5s ease;
 }
 
 button:active {

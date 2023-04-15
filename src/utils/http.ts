@@ -5,8 +5,9 @@ import axios from 'axios'
 const instance = axios.create({
   baseURL: window.location.origin,
   // timeout: 5000,
-  withCredentials: false,//表示跨域请求时是否需要使用凭证
+  withCredentials: true,//表示跨域请求时是否需要使用凭证
 })
+
 // 响应拦截器
 // instance.interceptors.response.use(response => {
 //   if (!getCookie('token_remderDay')) {
@@ -48,6 +49,7 @@ export default function (method = 'get', url = '', data = {}, headers?) {
       'Content-Type': 'application/json;charset=UTF-8',
     }
   }
+  console.log(`lzy  headers:`, headers)
   return new Promise((resolve, reject) => {
     instance({ method, url, data, headers })
       .then(res => {

@@ -28,28 +28,32 @@ watch(() => {
         </RouterLink>
       </div>
     </div>
-    <Suspense>
-      <RouterView />
-    </Suspense>
+    <div class="content">
+      <Suspense>
+        <RouterView />
+      </Suspense>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 #content {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 10px;
+  grid-template-columns: 180px 1fr;
+  gap: 30px;
   width: 100vw;
   overflow: hidden;
   height: 100vh;
   font-size: 1.6em;
+  background-color: transparent;
 
   .column {
-    background: rgb(34, 40, 48);
+    background: #fff;
     padding: 10px;
     padding-top: 20%;
     gap: 10px;
     text-align: center;
+    box-shadow: 1px 0 3px 0px #eee;
 
     img {
       border-radius: 10px;
@@ -64,7 +68,7 @@ watch(() => {
 
       a {
         text-decoration: none;
-        color: #ddd;
+        color: #000;
         border-radius: 10px;
         padding: 10px;
         // background-color: #fff;
@@ -82,6 +86,25 @@ watch(() => {
       }
     }
 
+  }
+
+  .content {
+    background-color: #fff;
+    // box-shadow: -1px 0 3px 0px #eee;
+  }
+}
+
+@media screen and (max-width: 860px) {
+  #content {
+    grid-template-columns: 165px 1fr;
+    gap: 0px;
+
+    .column {
+      // display: none;
+      // box-shadow: 1px 0 3px 0px #999;
+
+      box-shadow: 1px 0 3px 0px #eee;
+    }
   }
 }
 </style>

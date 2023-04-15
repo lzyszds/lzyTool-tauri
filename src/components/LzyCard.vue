@@ -1,12 +1,12 @@
 <script setup lang='ts'>
 import { defineProps } from "vue";
-import { DetailArrType } from "@/types/parsingType"
-const { data } = defineProps<{ data: DetailArrType }>();
+import { ParsingType } from "@/types/parsingType"
+const { data } = defineProps<{ data: ParsingType }>();
 </script>
 
 <template>
   <div class="card">
-    <div class="content" :style="{ backgroundImage: `url(${data.figure_pic})` }">
+    <div class="content" :style="{ backgroundImage: `url(${data.img})` }">
       <div class="back">
         <div class="back-content">
           <svg stroke="#ffffff" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
@@ -34,16 +34,11 @@ const { data } = defineProps<{ data: DetailArrType }>();
         </div>
 
         <div class="front-content">
-          <small class="badge">Pasta</small>
+          <small class="badge">{{ data.length ? data.length : '预告' }}</small>
           <div class="description">
-            <div class="title">
-              <p class="title">
-                <strong>角色： {{ data.info_item_role }} </strong>
-              </p>
+            <div class="card-footer">
+              <p v-for="(item, index) in data.desc" :key="index">{{ item.replace("\s", '') }}</p>
             </div>
-            <p class="card-footer">
-              {{ data.info_item_desc }}
-            </p>
           </div>
         </div>
       </div>
@@ -57,6 +52,8 @@ const { data } = defineProps<{ data: DetailArrType }>();
   width: 190px;
   height: 254px;
   cursor: pointer;
+  padding: 0;
+  background-color: #eee;
 }
 
 .content {
@@ -64,11 +61,10 @@ const { data } = defineProps<{ data: DetailArrType }>();
   height: 100%;
   transform-style: preserve-3d;
   transition: transform 300ms;
-  box-shadow: 0px 0px 10px 1px #000000ee;
-  border-radius: 5px;
+  border-radius: 10px;
   background-size: cover;
   background-repeat: no-repeat;
-  /* 滤镜 */
+  box-shadow: 0px 1px 3px 2px rgba($color: #000, $alpha: .5);
 }
 
 .front,
@@ -118,7 +114,8 @@ const { data } = defineProps<{ data: DetailArrType }>();
 
 .card:hover .content {
   transform: rotateY(180deg);
-  filter: saturate(1.2) contrast(1.2) brightness(1.1);
+
+  // filter: saturate(1.2) contrast(1.2) brightness(1.1);
 }
 
 @keyframes rotation_481 {
@@ -158,7 +155,7 @@ const { data } = defineProps<{ data: DetailArrType }>();
   box-shadow: 0px 0px 10px 5px #00000088;
   padding: 10px;
   background-color: #00000099;
-  backdrop-filter: blur(5px) brightness(0.9);
+  backdrop-filter: blur(5px);
   border-radius: 5px;
 }
 
@@ -174,8 +171,8 @@ const { data } = defineProps<{ data: DetailArrType }>();
 }
 
 .card-footer {
-  color: #ffffff88;
-  margin-top: 5px;
+  color: #fff;
+  // margin-top: 5px;
   font-size: 12px;
   /* 超出5行不显示 */
   overflow: hidden;
@@ -184,6 +181,22 @@ const { data } = defineProps<{ data: DetailArrType }>();
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
 
+  p {
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    &:nth-child(n+1) {
+      -webkit-line-clamp: 1;
+    }
+
+    &:last-child {
+      -webkit-line-clamp: 3;
+    }
+
+  }
 }
 
 strong {

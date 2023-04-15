@@ -15,7 +15,8 @@
 ::-webkit-scrollbar {
   width: 7px;
   height: 8px;
-  background-color: rgb(245, 245, 245);
+  background-color: rgb(245, 245, 245, 0);
+  outline: none;
 }
 
 
@@ -26,7 +27,7 @@
 ::-webkit-scrollbar-thumb {
   background-color: $themeColor;
   border-radius: 20px;
-  border: 1px solid rgb(245, 245, 245);
+  // border: 1px solid rgb(245, 245, 245);
   transition: 1s all;
 }
 
