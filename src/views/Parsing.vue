@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { reactive, nextTick } from 'vue'
-import { ElInput, ElSelect, ElOption, ElButton } from 'element-plus';
+import { ElSelect, ElOption, ElButton, ElAutocomplete } from 'element-plus';
 import http from '../utils/http';
-import { ParsingType, ListArrType, GetVideoUrlType } from '../types/parsingType';
+import { ParsingType, ListArrType, GetVideoUrlType, ListItem } from '../types/parsingType';
 import LzyButton from '@/components/LzyButton.vue';
 import LzyCard from '@/components/LzyCard.vue';
 // import { show, hide } from "@/utils/loaders";
@@ -26,7 +26,7 @@ const parsing = reactive({ // 定义一个响应式的对象
   changeTabData: [] as any[], //目录切换数据
   loading: false,
 })
-// 请求获取目录
+// 请求获取视频列表
 const getList = (): void => {
   // show('.parsing')
   http('get', `/api/getSearchList?name=` + parsing.input).then((res: any) => {
@@ -34,6 +34,8 @@ const getList = (): void => {
   })
   parsing.isListShow = false
 }
+
+// 请求获取视频详情目录
 const lookUpItem = (item: any): void => {
   parsing.loading = true
   http('get', `/api/getVideoUrl?url=` + item.href).then((res: any) => {
@@ -73,6 +75,19 @@ function setClass() {
     }
   }
 }
+
+const getSearch = async (value) => {
+  return await http('get', `/api/getSearch?name=` + value) as ListItem[]
+}
+const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
+  getSearch(queryString).then((res: ListItem[]) => {
+    cb(res)
+  })
+}
+const handleSelect = (item) => {
+  parsing.input = item.docname
+  getList()
+}
 </script>
 
 <template>
@@ -81,7 +96,12 @@ function setClass() {
       <el-select v-model="parsing.api" class="m-2" placeholder="Select">
         <el-option v-for="(item, index) in parsing.options" :key="index" :label="index" :value="item" />
       </el-select>
-      <el-input v-model="parsing.input" @keydown.enter="getList" placeholder="Please input" clearable />
+      <el-autocomplete v-model="parsing.input" :fetch-suggestions="querySearchAsync" placeholder="" @select="handleSelect"
+        :debounce='300'>
+        <template #default="{ item }">
+          <div class="docname">{{ item.docname }}</div>
+        </template>
+      </el-autocomplete>
       <ElButton @click="getList" type="primary">搜 索</ElButton>
       <ElButton @click="parsing.isListShow = !parsing.isListShow" type="primary" style="margin: 0;">目 录</ElButton>
     </div>
@@ -108,8 +128,8 @@ function setClass() {
   <div class="searchRes">
     <!-- 搜索结果列表 -->
     <div class="searchResList">
-      <div class="searchResItem" v-for="item in parsing.searchData" :key="item.title" @click="lookUpItem(item)">
-        <LzyCard :data="item"></LzyCard>
+      <div class="searchResItem" v-for="item in parsing.searchData" :key="item.title">
+        <LzyCard @click="lookUpItem(item)" :data="item"></LzyCard>
         <p class="title">{{ item.title }}</p>
       </div>
     </div>

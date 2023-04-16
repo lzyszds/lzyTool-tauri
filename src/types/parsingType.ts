@@ -26,3 +26,12 @@ export interface GetVideoUrlType {
   page: number,
   isNoStoreWatchHistory: boolean,
 }
+
+export interface ListItem {
+  docname: string,
+  title: string,
+  id: string,
+  href: string,
+  type: string,
+  img: string,
+}
