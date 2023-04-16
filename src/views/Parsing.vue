@@ -1,7 +1,8 @@
 <script setup lang='ts'>
 import { reactive, nextTick } from 'vue'
 import { ElSelect, ElOption, ElButton, ElAutocomplete } from 'element-plus';
-import http from '../utils/http';
+import { http } from "@tauri-apps/api";
+
 import { ParsingType, ListArrType, GetVideoUrlType, ListItem } from '../types/parsingType';
 import LzyButton from '@/components/LzyButton.vue';
 import LzyCard from '@/components/LzyCard.vue';
@@ -11,10 +12,24 @@ const inputs = 'https://v.qq.com/x/cover/'
 
 
 const parsing = reactive({ // 定义一个响应式的对象
-  input: '柯南',//输入框
-  api: 'http://localhost:2048/jx_parsApi?url=',//解析接口地址
+  input: '斗罗大陆',//输入框
+  api: "https://jx.jsonplayer.com/player/?url=",
   options: {
-    'Jsonplayer': "http://localhost:2048/jx_parsApi?url=",
+    'Jsonplayer': "https://jx.jsonplayer.com/player/?url=",
+    'Aidouer': 'https://jx.aidouer.net/?url=',
+    '冰豆': 'https://api.qianqi.net/vip/?url=',
+    '云析': 'https://jx.yparse.com/index.php?url=',
+    "ckmov": "https://www.ckmov.vip/api.php?url=",
+    "H8": "https://www.h8jx.com/jiexi.php?url=",
+    "解析la": "https://api.jiexi.la/?url=",
+    "M3U8": "https://jx.m3u8.tv/jiexi/?url=",
+    "诺讯": "https://www.nxflv.com/?url=",
+    "OK": "https://okjx.cc/?url=",
+    "PM": "https://www.playm3u8.cn/jiexi.php?url=",
+    "盘古": "https://www.pangujiexi.cc/jiexi.php?url=",
+    "维多": "https://jx.ivito.cn/?url=",
+    "虾米": "https://jx.xmflv.com/?url=",
+    "8090": "https://www.8090g.cn/?url="
   },//解析接口列表  
   searchData: [] as ParsingType[], //解析数据
   data: [] as GetVideoUrlType[][], //解析数据
@@ -25,20 +40,33 @@ const parsing = reactive({ // 定义一个响应式的对象
   detail: {} as ParsingType, //视频详情
   changeTabData: [] as any[], //目录切换数据
   loading: false,
+  searchPage: true
 })
 // 请求获取视频列表
 const getList = (): void => {
   // show('.parsing')
-  http('get', `/api/getSearchList?name=` + parsing.input).then((res: any) => {
+  http.fetch(`/api/getSearchList?name=` + parsing.input, {
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    method: 'GET',
+  }).then((res: any) => {
     parsing.searchData = res
   })
   parsing.isListShow = false
+  parsing.searchPage = true
 }
 
 // 请求获取视频详情目录
 const lookUpItem = (item: any): void => {
   parsing.loading = true
-  http('get', `/api/getVideoUrl?url=` + item.href).then((res: any) => {
+  parsing.searchPage = false
+  http.fetch(`/api/getVideoUrl?url=` + item.href, {
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    method: 'GET',
+  }).then((res: any) => {
     parsing.data = res
     parsing.changeTabData = res.map(_res => {
       return _res[0].title + '-' + _res[_res.length - 1].title
@@ -54,14 +82,13 @@ nextTick(() => { getList() })
 const changeTabIndex = (index: number): void => {
   // 设置当前指数
   parsing.listActive = index
-  console.log(`lzy  parsing.data:`, parsing.data)
   // 设置当前列表数据
   parsing.listArr = parsing.data[index].map((item: any) => {
     const isHerald = item.isNoStoreWatchHistory
     return {
       title: item.title,
       url: `${item.cid}/${item.vid}.html`,
-      isHerald: isHerald == 'true' ? '预告' : ''
+      isHerald: isHerald == true ? '预告' : ''
     }
   })
 }
@@ -77,10 +104,11 @@ function setClass() {
 }
 
 const getSearch = async (value) => {
-  return await http('get', `/api/getSearch?name=` + value) as ListItem[]
+
+  return await http.fetch(`/api/getSearch?name=` + value, { headers: { 'Content-Type': 'application/json;charset=UTF-8', }, method: 'GET', })
 }
 const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
-  getSearch(queryString).then((res: ListItem[]) => {
+  getSearch(queryString).then((res: any) => {
     cb(res)
   })
 }
@@ -89,7 +117,6 @@ const handleSelect = (item) => {
   getList()
 }
 </script>
-
 <template>
   <div class="parsing">
     <div class="header">
@@ -97,7 +124,7 @@ const handleSelect = (item) => {
         <el-option v-for="(item, index) in parsing.options" :key="index" :label="index" :value="item" />
       </el-select>
       <el-autocomplete v-model="parsing.input" :fetch-suggestions="querySearchAsync" placeholder="" @select="handleSelect"
-        :debounce='300'>
+        :debounce='300' class="Elutocomplete">
         <template #default="{ item }">
           <div class="docname">{{ item.docname }}</div>
         </template>
@@ -125,7 +152,7 @@ const handleSelect = (item) => {
       </div>
     </div>
   </div>
-  <div class="searchRes">
+  <div class="searchRes" v-if="parsing.searchPage">
     <!-- 搜索结果列表 -->
     <div class="searchResList">
       <div class="searchResItem" v-for="item in parsing.searchData" :key="item.title">
@@ -134,10 +161,18 @@ const handleSelect = (item) => {
       </div>
     </div>
   </div>
-  <iframe allowFullScreen='true' width="100%" height="93%" sandbox="allow-scripts allow-same-origin" :src="parsing.url" />
+  <iframe v-else allowFullScreen='true' width="99.5%" height="88%" sandbox="allow-scripts allow-same-origin"
+    :src="parsing.url" />
 </template>
 
 <style lang="scss" scoped>
+iframe {
+  border-radius: 10px;
+  border: 1px solid #eee;
+  outline: #e53935;
+  box-shadow: 1px 1px 10px #00000030, -1px -1px 10px #00000030;
+}
+
 .parsing {
   padding: 10px;
   background-color: #ffffff30;
@@ -154,6 +189,10 @@ const handleSelect = (item) => {
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
+
+    :deep(.Elutocomplete) {
+      flex: 1;
+    }
   }
 
   .parsingCon {
@@ -283,6 +322,8 @@ const handleSelect = (item) => {
     }
 
   }
+
+
 }
 
 .searchResList {
