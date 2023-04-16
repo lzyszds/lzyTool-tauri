@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<!-- <script setup lang='ts'>
 import axios from "axios";
 
 
@@ -35,4 +35,4 @@ const gpt = () => {
 </template>
 
 <style lang='scss' scoped>
-</style>
+</style> -->
