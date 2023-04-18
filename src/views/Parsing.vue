@@ -196,6 +196,13 @@ iframe {
   background-color: #000;
 }
 
+iframe {
+  border-radius: 10px;
+  border: 1px solid #eee;
+  outline: #e53935;
+  box-shadow: 1px 1px 10px #00000030, -1px -1px 10px #00000030;
+}
+
 .parsing {
   padding: 10px;
   background-color: #ffffff30;
@@ -212,14 +219,6 @@ iframe {
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
-
-    :deep(.el-select) {
-      width: 120px;
-    }
-
-    :deep(.Elutocomplete) {
-      flex: 1;
-    }
   }
 
   .parsingCon {
@@ -349,8 +348,6 @@ iframe {
     }
 
   }
-
-
 }
 
 .searchResList {
