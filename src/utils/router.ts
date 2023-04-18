@@ -11,16 +11,19 @@ const routes = [
   {
     path: "/",
     name: "首页",
+    icon: '&#xe620;',
     component: Home, //注意，没有重定向就会出现两个一模一样的home页面
   },
   {
     path: "/about",
     name: "关于",
+    icon: '&#xe63f;',
     component: About,
   },
   {
     path: "/parsing",
-    name: "解析",
+    name: "Tv",
+    icon: '&#xe627;',
     component: Parsing,
   },
 ];

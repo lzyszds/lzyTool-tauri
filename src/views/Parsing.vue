@@ -1,19 +1,23 @@
 <script setup lang='ts'>
 import { reactive, nextTick } from 'vue'
-import { ElSelect, ElOption, ElButton, ElAutocomplete } from 'element-plus';
+import { ElSelect, ElOption, ElButton, ElAutocomplete, ElEmpty } from 'element-plus';
 import { http } from "@tauri-apps/api";
-
+import empty from "@/assets/images/empty.png";
 import { ParsingType, ListArrType, GetVideoUrlType, ListItem } from '../types/parsingType';
 import LzyButton from '@/components/LzyButton.vue';
 import LzyCard from '@/components/LzyCard.vue';
 // import { show, hide } from "@/utils/loaders";
 
-const inputs = 'https://v.qq.com/x/cover/'
-
+const api = 'http://localhost:2000/tauri'
 
 const parsing = reactive({ // 定义一个响应式的对象
-  input: '斗罗大陆',//输入框
-  api: "https://jx.jsonplayer.com/player/?url=",
+  input: '无间道',//输入框
+  souritem: '爱奇艺',
+  sourTypes: {
+    "腾讯": 'https://v.qq.com/x/cover/',
+    "爱奇艺": 'https://www.iqiyi.com/',
+  },
+  api: 'Jsonplayer',
   options: {
     'Jsonplayer': "https://jx.jsonplayer.com/player/?url=",
     'Aidouer': 'https://jx.aidouer.net/?url=',
@@ -45,13 +49,14 @@ const parsing = reactive({ // 定义一个响应式的对象
 // 请求获取视频列表
 const getList = (): void => {
   // show('.parsing')
-  http.fetch(`/api/getSearchList?name=` + parsing.input, {
+  http.fetch(`${api}/getSearchList?name=${parsing.input}&type=${parsing.souritem}`, {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
     },
     method: 'GET',
   }).then((res: any) => {
-    parsing.searchData = res
+    console.log(`lzy  res:`, res)
+    parsing.searchData = res.data
   })
   parsing.isListShow = false
   parsing.searchPage = true
@@ -61,21 +66,30 @@ const getList = (): void => {
 const lookUpItem = (item: any): void => {
   parsing.loading = true
   parsing.searchPage = false
-  http.fetch(`/api/getVideoUrl?url=` + item.href, {
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-    },
-    method: 'GET',
-  }).then((res: any) => {
-    parsing.data = res
-    parsing.changeTabData = res.map(_res => {
-      return _res[0].title + '-' + _res[_res.length - 1].title
+  try {
+    http.fetch(`${api}/getVideoUrl?url=${item.href}&type=${parsing.souritem}`, {
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      method: 'GET',
+    }).then((res: any) => {
+      if (res.data.length == 0) {
+        parsing.loading = false
+        return
+      }
+      parsing.data = res.data
+      parsing.changeTabData = res.data.map(_res => {
+        return _res[0].title + '-' + _res[_res.length - 1].title
+      })
+      parsing.loading = false
+      changeTabIndex(0)
     })
-    parsing.loading = false
-    changeTabIndex(0)
-  })
-  parsing.detail = item
-  parsing.isListShow = true
+  } catch (e) {
+
+  } finally {
+    parsing.detail = item
+    parsing.isListShow = true
+  }
 }
 nextTick(() => { getList() })
 // 改变标签索引
@@ -93,7 +107,10 @@ const changeTabIndex = (index: number): void => {
   })
 }
 const toLookVideo = (item: string): void => {
-  parsing.url = parsing.api + inputs + item
+  const { api, options, souritem, sourTypes } = parsing
+  parsing.url = options[api] + sourTypes[souritem] + item
+  parsing.isListShow = false
+  parsing.searchPage = false
 }
 function setClass() {
   if (parsing.changeTabData.length == 1) {
@@ -104,8 +121,8 @@ function setClass() {
 }
 
 const getSearch = async (value) => {
-
-  return await http.fetch(`/api/getSearch?name=` + value, { headers: { 'Content-Type': 'application/json;charset=UTF-8', }, method: 'GET', })
+  const { data } = await http.fetch(`${api}/getSearch?name=${value}&type=${parsing.souritem}`, { headers: { 'Content-Type': 'application/json;charset=UTF-8', }, method: 'GET', })
+  return data
 }
 const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
   getSearch(queryString).then((res: any) => {
@@ -120,11 +137,15 @@ const handleSelect = (item) => {
 <template>
   <div class="parsing">
     <div class="header">
+      <el-select v-model="parsing.souritem" placeholder="Select">
+        <el-option v-for="(item, index) in parsing.sourTypes" :key="index" :label="index" :value="index" />
+      </el-select>
+      接口：
       <el-select v-model="parsing.api" class="m-2" placeholder="Select">
-        <el-option v-for="(item, index) in parsing.options" :key="index" :label="index" :value="item" />
+        <el-option v-for="(item, index) in parsing.options" :key="index" :label="index" :value="index" />
       </el-select>
       <el-autocomplete v-model="parsing.input" :fetch-suggestions="querySearchAsync" placeholder="" @select="handleSelect"
-        :debounce='300' class="Elutocomplete">
+        :debounce='300' class="Elutocomplete" @keydown.enter="getList">
         <template #default="{ item }">
           <div class="docname">{{ item.docname }}</div>
         </template>
@@ -139,13 +160,13 @@ const handleSelect = (item) => {
       </div>
       <div class="listings" v-loading="parsing.loading">
         <div class="changeTab" v-if="parsing.changeTabData.length > 1">
-
           <p v-for="(item, index) in parsing.changeTabData" :key="index" @click="changeTabIndex(index)"
             :class="{ 'active': parsing.listActive === index }">
             {{ item }}
           </p>
         </div>
-        <div class="listContent" :class="setClass()">
+        <el-empty v-if="parsing.listArr.length == 0" :image="empty" description="当前源找不到内容，请切换其他源" />
+        <div v-else class="listContent" :class="setClass()">
           <LzyButton v-for="item in parsing.listArr" class="listItem" :key="item.title" @click="toLookVideo(item.url)"
             :msg="item.title" height="24px" :after="item.isHerald" />
         </div>
@@ -171,6 +192,8 @@ iframe {
   border: 1px solid #eee;
   outline: #e53935;
   box-shadow: 1px 1px 10px #00000030, -1px -1px 10px #00000030;
+  margin-left: 10px;
+  background-color: #000;
 }
 
 .parsing {
@@ -189,6 +212,10 @@ iframe {
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
+
+    :deep(.el-select) {
+      width: 120px;
+    }
 
     :deep(.Elutocomplete) {
       flex: 1;

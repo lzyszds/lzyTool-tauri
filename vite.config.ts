@@ -13,26 +13,6 @@ export default defineConfig(async () => ({
   server: {
     port: 2048,
     strictPort: true,
-    proxy: {
-      // proxy all requests starting with /api to jsonplaceholder
-      "/fedApi": {
-        "target": "https://fed.chanceyu.com/atom.xml",
-        "changeOrigin": true,
-        "rewrite": (path) => path.replace(/^\/fedApi/, "")
-      },
-      "/api": {
-        "target": "http://localhost:2000/tauri",
-        "changeOrigin": true,
-        "rewrite": (path) => path.replace(/^\/api/, "")
-      },
-      "/smartbox": {
-        "target": "https://pbaccess.video.qq.com/trpc.videosearch.smartboxServer.HttpRountRecall/Smartbox",
-        "changeOrigin": true,
-        "secure": false, // 如果是https接口，需要配置这个参数
-        "rewrite": (path) => path.replace(/^\/smartbox/, "")
-      },
-
-    }
   },
   base: './',
   css: {
