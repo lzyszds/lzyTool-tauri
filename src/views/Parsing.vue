@@ -1,12 +1,16 @@
 <script setup lang='ts'>
 import { reactive, nextTick } from 'vue'
 import { ElSelect, ElOption, ElButton, ElAutocomplete, ElEmpty } from 'element-plus';
-import { http } from "@tauri-apps/api";
+import http from "@/utils/http";
 import empty from "@/assets/images/empty.png";
 import { ParsingType, ListArrType, GetVideoUrlType, ListItem } from '../types/parsingType';
 import LzyButton from '@/components/LzyButton.vue';
 import LzyCard from '@/components/LzyCard.vue';
 // import { show, hide } from "@/utils/loaders";
+import { IParams } from "@/types/shareType";
+
+// ui参考
+// https://dribbble.com/shots/16916297-Zush-Dark-Mode-Animation
 
 const api = 'http://localhost:2000/tauri'
 
@@ -49,14 +53,12 @@ const parsing = reactive({ // 定义一个响应式的对象
 // 请求获取视频列表
 const getList = (): void => {
   // show('.parsing')
-  http.fetch(`${api}/getSearchList?name=${parsing.input}&type=${parsing.souritem}`, {
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-    },
+  const config: IParams = {
+    url: `/getSearchList?name=${parsing.input}&type=${parsing.souritem}`,
     method: 'GET',
-  }).then((res: any) => {
-    console.log(`lzy  res:`, res)
-    parsing.searchData = res.data
+  }
+  http(config).then((res: any) => {
+    parsing.searchData = res
   })
   parsing.isListShow = false
   parsing.searchPage = true
@@ -67,18 +69,16 @@ const lookUpItem = (item: any): void => {
   parsing.loading = true
   parsing.searchPage = false
   try {
-    http.fetch(`${api}/getVideoUrl?url=${item.href}&type=${parsing.souritem}`, {
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
+    http({
+      url: `/getVideoUrl?url=${item.href}&type=${parsing.souritem}`,
       method: 'GET',
     }).then((res: any) => {
-      if (res.data.length == 0) {
+      if (res.length == 0) {
         parsing.loading = false
         return
       }
-      parsing.data = res.data
-      parsing.changeTabData = res.data.map(_res => {
+      parsing.data = res
+      parsing.changeTabData = res.map(_res => {
         return _res[0].title + '-' + _res[_res.length - 1].title
       })
       parsing.loading = false
@@ -121,7 +121,8 @@ function setClass() {
 }
 
 const getSearch = async (value) => {
-  const { data } = await http.fetch(`${api}/getSearch?name=${value}&type=${parsing.souritem}`, { headers: { 'Content-Type': 'application/json;charset=UTF-8', }, method: 'GET', })
+  const data = await http({ url: `/getSearch?name=${value}&type=${parsing.souritem}`, method: 'GET', })
+  console.log(`lzy  data:`, data)
   return data
 }
 const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
@@ -150,8 +151,10 @@ const handleSelect = (item) => {
           <div class="docname">{{ item.docname }}</div>
         </template>
       </el-autocomplete>
-      <ElButton @click="getList" type="primary">搜 索</ElButton>
-      <ElButton @click="parsing.isListShow = !parsing.isListShow" type="primary" style="margin: 0;">目 录</ElButton>
+      <ElButton @click="getList" type="primary"><i class="fa fa-search"></i></ElButton>
+      <ElButton @click="parsing.isListShow = !parsing.isListShow" type="primary" style="margin: 0;">
+        <i class="fa fa-th-list"></i>
+      </ElButton>
     </div>
     <div class="parsingCon" :class="{ shake: parsing.isListShow }">
       <!-- 视频介绍详情 -->
@@ -211,7 +214,8 @@ iframe {
   z-index: 1;
 
   .header {
-    display: flex;
+    display: grid;
+    grid-template-columns: 100px 50px 150px 1fr 60px 60px;
     gap: 10px;
     justify-content: space-between;
     align-items: center;

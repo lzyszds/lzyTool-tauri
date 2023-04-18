@@ -1,12 +1,8 @@
-import { createRouter } from "vue-router";
-import { createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
 import Parsing from "@/views/Parsing.vue";
 
-//引入 nprogress
-import NProgress from 'nprogress' // 进度条
-import 'nprogress/nprogress.css' // 引入样式
 const routes = [
   {
     path: "/",
@@ -49,19 +45,5 @@ router.beforeEach(async (to: any) => {
 })
 
 
-// 简单配置
-NProgress.inc(0.4)
-NProgress.configure({ easing: 'ease', speed: 1000, showSpinner: false })
-
-// 进度条开始
-router.beforeEach((to, from, next) => {
-  NProgress.start()
-  next()
-})
-
-// 进度条结束
-router.afterEach(() => {
-  NProgress.done()
-})
 export { router, routes };
 
