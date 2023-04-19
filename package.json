@@ -8,10 +8,7 @@
     "tauriBuild": "tauri build",
     "tauriBuildDev": "tauri build --debug",
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri",
-    "tauriDev": "tauri dev"
+    "build": "vue-tsc --noEmit && vite build"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.2.0",

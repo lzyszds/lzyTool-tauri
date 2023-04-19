@@ -12,8 +12,6 @@ import { IParams } from "@/types/shareType";
 // ui参考
 // https://dribbble.com/shots/16916297-Zush-Dark-Mode-Animation
 
-const api = 'http://localhost:2000/tauri'
-
 const parsing = reactive({ // 定义一个响应式的对象
   input: '无间道',//输入框
   souritem: '爱奇艺',
@@ -126,6 +124,7 @@ const getSearch = async (value) => {
   return data
 }
 const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
+  parsing.isListShow = false
   getSearch(queryString).then((res: any) => {
     cb(res)
   })
@@ -185,29 +184,37 @@ const handleSelect = (item) => {
       </div>
     </div>
   </div>
-  <iframe v-else allowFullScreen='true' width="99.5%" height="88%" sandbox="allow-scripts allow-same-origin"
-    :src="parsing.url" />
+  <div v-else class="iframe">
+    <iframe v-if="parsing.url.length > 0" allowFullScreen='true' width="100%" height="100%"
+      sandbox="allow-scripts allow-same-origin" :src="parsing.url" />
+    <i v-else class="iconfont">&#xe641;</i>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-iframe {
+.iframe {
+  height: 88%;
   border-radius: 10px;
-  border: 1px solid #eee;
   outline: #e53935;
   box-shadow: 1px 1px 10px #00000030, -1px -1px 10px #00000030;
-  margin-left: 10px;
-  background-color: #000;
-}
+  margin: 0 1%;
+  background-color: #fff;
+  border: 10px solid #000;
+  position: relative;
 
-iframe {
-  border-radius: 10px;
-  border: 1px solid #eee;
-  outline: #e53935;
-  box-shadow: 1px 1px 10px #00000030, -1px -1px 10px #00000030;
+  & .iconfont {
+    position: absolute;
+    font-size: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000;
+  }
 }
 
 .parsing {
   padding: 10px;
+  padding-bottom: 0;
   background-color: #ffffff30;
   backdrop-filter: blur(40px);
   position: relative;
@@ -226,20 +233,19 @@ iframe {
   }
 
   .parsingCon {
-    width: calc(100vw - 248px);
+    width: 97.5%;
     height: 320px;
     position: absolute;
     display: grid;
     grid-template-columns: 230px 1fr;
     gap: 20px;
-    margin-top: 10px;
     padding: 5px 10px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 1px 1px 10px #00000030;
-    transition: .3s ease;
+    transition: .3s;
     z-index: -1;
-    transform: translate3d(10px, 0, 0);
+    transform: translate3d(0, -10px, 0);
     opacity: 0;
     pointer-events: none;
 

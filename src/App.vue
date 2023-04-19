@@ -29,7 +29,7 @@ watch(() => {
         </RouterLink>
       </div>
     </div>
-    <div class="content">
+    <div class="item_content">
       <Suspense>
         <RouterView />
       </Suspense>
@@ -46,11 +46,13 @@ watch(() => {
   overflow: hidden;
   height: 100vh;
   font-size: 1.6em;
-  background-color: transparent;
+  background-color: #fafaff;
 
   .column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #fff;
-    padding-top: 20%;
     gap: 10px;
     text-align: center;
     box-shadow: 1px 0 3px 0px #eee;
@@ -62,8 +64,9 @@ watch(() => {
     }
 
     .tool {
+      width: 100%;
       display: grid;
-      grid-template-rows: repeat(10, 60px);
+      grid-template-rows: repeat(5, 60px);
       gap: 10px;
       background-color: transparent;
       align-items: center;
@@ -120,38 +123,35 @@ watch(() => {
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        // .tooltip::before {
-        //   position: absolute;
-        //   content: "";
-        //   height: 8px;
-        //   width: 8px;
-        //   background: $themeColor;
-        //   bottom: -3px;
-        //   left: 0;
-        //   top: 50%;
-        //   transform: translate(-50%, -50%) rotate(45deg);
-        //   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        // }
+        .tooltip::before {
+          position: absolute;
+          content: "";
+          height: 8px;
+          width: 8px;
+          background: $themeColor;
+          bottom: -3px;
+          left: 0;
+          top: 50%;
+          transform: translate(-50%, -50%) rotate(45deg);
+          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
       }
     }
 
   }
 
-  .content {
+  .item_content {
     background-color: #fff;
-    // box-shadow: -1px 0 3px 0px #eee;
+    box-shadow: 0px 0 3px 0px #99999930;
   }
 }
 
 @media screen and (max-width: 860px) {
   #content {
-    grid-template-columns: 165px 1fr;
+    grid-template-columns: 80px 1fr;
     gap: 0px;
 
     .column {
-      // display: none;
-      // box-shadow: 1px 0 3px 0px #999;
-
       box-shadow: 1px 0 3px 0px #eee;
     }
   }
