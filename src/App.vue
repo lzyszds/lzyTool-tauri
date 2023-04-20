@@ -76,6 +76,11 @@ watch(() => {
         color: #000;
         padding: 10px;
         position: relative;
+        padding-left: 0px;
+
+        &:nth-child(3) {
+          font-size: 14.5px;
+        }
 
         .iconfont {
           font-size: 1.6em;
@@ -120,19 +125,6 @@ watch(() => {
           box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
           opacity: 0;
           pointer-events: none;
-          transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .tooltip::before {
-          position: absolute;
-          content: "";
-          height: 8px;
-          width: 8px;
-          background: $themeColor;
-          bottom: -3px;
-          left: 0;
-          top: 50%;
-          transform: translate(-50%, -50%) rotate(45deg);
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
       }
