@@ -2,43 +2,28 @@
 import { ref } from "vue";
 // import { http } from "@tauri-apps/api";
 import http from "@/utils/http";
-import { dayjs } from "element-plus";
 interface Entrytype {
   title: string,
   updated: string,
   href: string
 }
-const arr: Entrytype[] = []
-const titlen = ref()
-const timen = ref()
+let arr: Entrytype[] = []
+const iframeURL = ref('')
 try {
-  const data = await http({ url: '/chanceyu', method: 'GET', responseType: 'Text' }) as string
-  //生成新的DOM解析器
-  const parser = new DOMParser();
-  //读取返回字符串
-  const _xml = parser.parseFromString(data, "text/xml");
-  console.log(`lzy  _xml:`, _xml)
-  const entry = _xml.querySelectorAll('entry')
-  titlen.value = _xml.querySelector('feed>title')
-  const time = _xml.querySelector('feed>updated')
-  timen.value = dayjs(time!.innerHTML).format('YYYY-MM-DD')
-  entry.forEach((element, index) => {
-    // if (index > 7) return
-    const title: string = element.querySelector('title')!.innerHTML.replace('<![CDATA[', "").replace(']]>', "")
-    const updated: string = dayjs(element.querySelector('updated')!.innerHTML).format('YYYY-MM-DD')
-    const href: string = element.querySelector('id')!.innerHTML
-    arr.push({ title, updated, href })
-  });
+  const data = await http({ url: '/chanceyu', method: 'GET', responseType: 'JSON' })
+  arr = data as Entrytype[]
   console.log(`lzy  arr:`, arr)
-
 } catch (e) {
   console.log(`服务器估计崩了`, e)
 }
-
 </script>
 
 <template>
   <div class="homeApp">
+    <div>
+      <iframe :src="iframeURL" allowFullScreen='true' width="100%" height="100%"
+        sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
     <div class="information">
       <h2> 前端技术文章 </h2>
       <div class="infoContent">

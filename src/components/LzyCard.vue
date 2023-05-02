@@ -63,6 +63,7 @@ const { data } = defineProps<{ data: ParsingType }>();
   transition: transform 300ms;
   border-radius: 10px;
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0px 1px 3px 2px rgba($color: #000, $alpha: .5);
 }

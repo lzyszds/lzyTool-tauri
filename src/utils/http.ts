@@ -14,15 +14,14 @@ const api = 'http://localhost:2000/tauri'
 // @param url(必须)  接口地址
 // @param data(可选)  携带参数
 // @param headers(可选) 请求头可以自己设置，也可以使用默认的（不传）
-export default function ({ url, method, responseType }: IParams) {
+export default function ({ url, method, responseType, isDefind }: IParams) {
   NProgress.done()
   // 进度条开始
   NProgress.start()
 
-  // if (header) headers.responseType = ResponseType[header]
   const response = ResponseType[responseType!] || ResponseType.JSON
   return new Promise((resolve, reject) => {
-    fetch(api + url, { method, responseType: response })
+    fetch((!isDefind ? api + url : url), { method, responseType: response })
       .then(res => {
         resolve(res.data)
       })

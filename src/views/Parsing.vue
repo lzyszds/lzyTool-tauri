@@ -13,11 +13,11 @@ import { IParams } from "@/types/shareType";
 // https://dribbble.com/shots/16916297-Zush-Dark-Mode-Animation
 
 const parsing = reactive({ // 定义一个响应式的对象
-  input: '无间道',//输入框
-  souritem: '爱奇艺',
+  input: '柯南',//输入框
+  souritem: '腾讯',
   sourTypes: {
     "腾讯": 'https://v.qq.com/x/cover/',
-    "爱奇艺": 'https://www.iqiyi.com/',
+    "全网": 'https://www.iqiyi.com/',
   },
   api: 'Jsonplayer',
   options: {
@@ -56,38 +56,65 @@ const getList = (): void => {
     method: 'GET',
   }
   http(config).then((res: any) => {
-    parsing.searchData = res
+    if (parsing.souritem == '全网') parsing.searchData = res
+    else parsing.searchData = res
   })
   parsing.isListShow = false
   parsing.searchPage = true
 }
 
 // 请求获取视频详情目录
-const lookUpItem = (item: any): void => {
+const lookUpItem = (item: any, key: number): void => {
   parsing.loading = true
   parsing.searchPage = false
   try {
-    http({
-      url: `/getVideoUrl?url=${item.href}&type=${parsing.souritem}`,
-      method: 'GET',
-    }).then((res: any) => {
-      if (res.length == 0) {
-        parsing.loading = false
-        return
-      }
-      parsing.data = res
-      parsing.changeTabData = res.map(_res => {
-        return _res[0].title + '-' + _res[_res.length - 1].title
-      })
-      parsing.loading = false
-      changeTabIndex(0)
-    })
+    if (parsing.souritem == '腾讯') tenxunMulu(item)
+    else if (parsing.souritem == '全网') allMulu(item, key)
   } catch (e) {
-
+    console.log(e);
   } finally {
     parsing.detail = item
     parsing.isListShow = true
   }
+}
+const tenxunMulu = (item) => {
+  http({
+    url: `/getVideoUrl?url=${item.href}&type=${item.title.split('：')[1]}`,
+    method: 'GET',
+  }).then((res: any) => {
+    if (res.length == 0) {
+      return parsing.loading = false
+    }
+    parsing.data = res
+    console.log(`lzy  parsing.data:`, parsing.data)
+    parsing.changeTabData = res.map(_res => {
+      return _res[0].title + '-' + _res[_res.length - 1].title
+    })
+    console.log(`lzy  parsing.changeTabData:`, parsing.changeTabData)
+    parsing.loading = false
+    changeTabIndex(0)
+  })
+}
+const allMulu = (item, index) => {
+  http({
+    url: `/getVideoUrl?url=${item.href}&type=${item.title.split('：')[1]}`,
+    method: 'GET',
+  }).then((res: any) => {
+    console.log(`lzy  res:`, res)
+    if (res.length == 0) {
+      return parsing.loading = false
+    }
+    parsing.data = res
+    console.log(`lzy  parsing.data:`, parsing.data)
+    parsing.changeTabData = res.map(_res => {
+      if (_res[0]) return _res[0].title + '-' + _res[_res.length - 1].title
+    })
+    console.log(`lzy  parsing.changeTabData:`, parsing.changeTabData)
+    parsing.loading = false
+
+    changeTabIndex(0)
+  })
+
 }
 nextTick(() => { getList() })
 // 改变标签索引
@@ -95,18 +122,19 @@ const changeTabIndex = (index: number): void => {
   // 设置当前指数
   parsing.listActive = index
   // 设置当前列表数据
+  console.log(parsing.data[index]);
   parsing.listArr = parsing.data[index].map((item: any) => {
     const isHerald = item.isNoStoreWatchHistory
     return {
       title: item.title,
-      url: `${item.cid}/${item.vid}.html`,
+      url: item.href,
       isHerald: isHerald == true ? '预告' : ''
     }
   })
 }
 const toLookVideo = (item: string): void => {
-  const { api, options, souritem, sourTypes } = parsing
-  parsing.url = options[api] + sourTypes[souritem] + item
+  const { api, options } = parsing
+  parsing.url = options[api] + item
   parsing.isListShow = false
   parsing.searchPage = false
 }
@@ -120,12 +148,12 @@ function setClass() {
 
 const getSearch = async (value) => {
   const data = await http({ url: `/getSearch?name=${value}&type=${parsing.souritem}`, method: 'GET', })
-  console.log(`lzy  data:`, data)
   return data
 }
 const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
   parsing.isListShow = false
   getSearch(queryString).then((res: any) => {
+    console.log(`lzy  res:`, res)
     cb(res)
   })
 }
@@ -178,8 +206,8 @@ const handleSelect = (item) => {
   <div class="searchRes" v-if="parsing.searchPage">
     <!-- 搜索结果列表 -->
     <div class="searchResList">
-      <div class="searchResItem" v-for="item in parsing.searchData" :key="item.title">
-        <LzyCard @click="lookUpItem(item)" :data="item"></LzyCard>
+      <div class="searchResItem" v-for="(item, index) in parsing.searchData" :key="item.title">
+        <LzyCard @click="lookUpItem(item, index)" :data="item"></LzyCard>
         <p class="title">{{ item.title }}</p>
       </div>
     </div>
