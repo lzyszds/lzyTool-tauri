@@ -2,6 +2,7 @@ import { HttpVerb } from "@tauri-apps/api/http";
 
 export interface IParams {
   url: string,
+  /* 大写GEt */
   method: HttpVerb,
   data?: any,
   responseType?: 'JSON' | 'Text' | 'Binary',

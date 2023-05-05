@@ -6,9 +6,10 @@ export interface ParsingType {
   desc: string[]
 }
 export interface ListArrType {
+  fullTitle: string,
   title: string,
-  url: string,
-  isHerald: string,
+  href: string,
+  isNoStoreWatchHistory: string,
 }
 export interface DetailArrType {
   figure_pic: string,
@@ -34,4 +35,31 @@ export interface ListItem {
   href: string,
   type: string,
   img: string,
+}
+
+export interface StoreType {
+  isListShow: boolean;
+  searchShow: boolean;
+  V_loading: boolean;
+  souritem: string;
+  parsApi: string;
+  searchData: ParsingType[];
+  catalogDetails: ParsingType;
+  catalogList: ListArrType[][];
+  pagingTabDataList: string[];
+  pagingTabIndex: number;
+  pagingTabData: ListArrType[];
+  activePlay: number;
+}
+export interface PropsHotType {
+  optionHot?: string[],
+  data: {
+    title: string,
+    hotItems: {
+      name: string,
+      pic: string,
+      info: string,
+      wrap: string
+    }[]
+  }
 }

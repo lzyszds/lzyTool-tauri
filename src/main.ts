@@ -7,10 +7,12 @@ import App from "./App.vue" //引入入口组件
 //导入element-plus
 import "element-plus/dist/index.css"
 import { vLoading } from "element-plus/es/components/loading/src/directive" // 按需引入loading组件
+import { createPinia } from 'pinia'
+const pinia = createPinia()
 
 import { router } from "./utils/router"; //引入路由
 const app = createApp(App) //创建vue实例
 app.directive("loading", vLoading) // 自定义load指令
 
-app.use(router) //使用路由
+app.use(router).use(pinia) //使用路由
 app.mount("#app") //挂载vue实例

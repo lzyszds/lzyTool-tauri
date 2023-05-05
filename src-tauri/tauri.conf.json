@@ -54,7 +54,8 @@
         "decorations": "是否显示边框",
         "decorations": true,
         "transparent": "是否透明",
-        "transparent": true
+        "transparent": true,
+        "theme": "Dark"
       }
     ]
   }

@@ -4,6 +4,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --main-color: #323232;
 }
 
 ::selection {
@@ -33,6 +34,7 @@
 
 #app {
   background-color: #fff;
+  border-radius: 20px;
 }
 
 a {

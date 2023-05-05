@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
 import Parsing from "@/views/Parsing.vue";
+import parsingIndex from "@/views/parsings/index.vue";
+import parsingSearch from "@/views/parsings/SearchRes.vue";
+import parsingPlay from "@/views/parsings/Play.vue";
 
 const routes = [
   {
@@ -19,8 +22,22 @@ const routes = [
   {
     path: "/parsing",
     name: "Tv",
-    icon: '&#xe627;',
+    icon: '&#xe65e;',
     component: Parsing,
+    children: [{
+      path: 'index',
+      name: 'Content',
+      component: parsingIndex,
+    }, {
+      path: 'search',
+      name: 'Search',
+      component: parsingSearch,
+    }, {
+      path: 'play',
+      name: 'Play',
+      component: parsingPlay,
+    }
+    ]
   },
 ];
 

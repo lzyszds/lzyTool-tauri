@@ -1,32 +1,44 @@
 <script setup lang="ts">
 import { routes } from './utils/router'
-import { watch, ref } from 'vue';
-import { RouteRecordRaw, RouterLink, RouterView, useRoute } from 'vue-router'
-const router = useRoute()
+import { ref } from 'vue';
+import { RouteRecordRaw, RouterView, useRouter } from 'vue-router'
+const router = useRouter()
 const activePath = ref<number>(0)
 
-activePath.value = routes.findIndex((item: RouteRecordRaw) => item.path === router.path)
+activePath.value = routes.findIndex((item: RouteRecordRaw) => {
+  if (window.location.pathname === '/') return true
+  return window.location.pathname.indexOf(item.path) === 0 && item.path !== '/'
+})
+
+
 
 //监听路由变化 从而改变pathActive 从而改变样式 
-watch(() => {
-  return router.path
-}, (newVal) => {
-  //循环浏览路线以查找当前路线的索引。
-  activePath.value = routes.findIndex(item => item.path === newVal)
-})
+// watch(() => {
+//   return route.path
+// }, (newVal) => {
+//   //循环浏览路线以查找当前路线的索引。
+//   activePath.value = routes.findIndex(item => item.path === newVal)
+// })
+const toLink = (item, index) => {
+  activePath.value = index
+  if (item.path === '/parsing') {
+    router.push("/parsing/index")
+    return
+  }
+  router.push(item.path)
+}
 </script>
 
 <template>
+  <!-- <TauriTab /> -->
   <div id="content">
     <div class="column">
-      <!-- <img width="150" src="@/assets/images/logo.png" alt=""> -->
       <div class="tool">
-        <RouterLink v-for="(item, index) in routes" :key="index" :to="item.path"
+        <div class="link" v-for="(item, index) in routes" :key="index" @click="toLink(item, index)"
           :class="activePath == index ? 'active' : ''">
           <i class="iconfont" v-html="item.icon"></i>
-          <span class="tooltip">{{ item.name }}</span>
-          <!-- {{ item.name }} -->
-        </RouterLink>
+          <!-- <span class="tooltip">{{ item.name }}</span> -->
+        </div>
       </div>
     </div>
     <div class="item_content">
@@ -40,18 +52,17 @@ watch(() => {
 <style scoped lang="scss">
 #content {
   display: grid;
-  grid-template-columns: 100px 1fr;
+  grid-template-columns: 60px 1fr;
   gap: 30px;
   width: 100vw;
   overflow: hidden;
   height: 100vh;
   font-size: 1.6em;
-  background-color: #fafaff;
+  background-color: #fff;
 
   .column {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    grid-template-rows: 1fr 300px 1fr;
     background: #fff;
     gap: 10px;
     text-align: center;
@@ -67,20 +78,19 @@ watch(() => {
       width: 100%;
       display: grid;
       grid-template-rows: repeat(5, 60px);
+      grid-row-start: 2;
       gap: 10px;
       background-color: transparent;
       align-items: center;
+      margin-top: 300px;
 
-      a {
+      div.link {
+        cursor: pointer;
         text-decoration: none;
         color: #000;
         padding: 10px;
         position: relative;
         padding-left: 0px;
-
-        &:nth-child(3) {
-          font-size: 14.5px;
-        }
 
         .iconfont {
           font-size: 1.6em;
@@ -133,8 +143,9 @@ watch(() => {
   }
 
   .item_content {
+    padding: 20px;
     background-color: #fff;
-    box-shadow: 0px 0 3px 0px #99999930;
+    // box-shadow: 0px 0 3px 0px #99999930;
   }
 }
 
