@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <button class="cssbuttons-io-button"> Search For
+  <button class="cssbuttons-io-button">
     <div class="icon">
       <slot></slot>
     </div>

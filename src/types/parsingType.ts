@@ -51,15 +51,3 @@ export interface StoreType {
   pagingTabData: ListArrType[];
   activePlay: number;
 }
-export interface PropsHotType {
-  optionHot?: string[],
-  data: {
-    title: string,
-    hotItems: {
-      name: string,
-      pic: string,
-      info: string,
-      wrap: string
-    }[]
-  }
-}

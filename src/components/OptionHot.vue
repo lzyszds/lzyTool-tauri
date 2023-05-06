@@ -1,49 +1,51 @@
 <script setup lang='ts'>
 import http from "@/utils/http";
 import { ref, defineProps } from "vue";
-interface Props {
+interface PropsHotType {
   optionHot?: string[],
   data: {
     title: string,
+    hotTab: string[],
     hotItems: {
-      name: string,
+      title: string,
       pic: string,
+      href: string,
       info: string,
-      wrap: string
+      desc: string
     }[]
   }
 }
-
-const { optionHot, data } = defineProps<Props>()
-
-const tabActive = ref(0)
-const activeIndex = (index: number) => {
-  tabActive.value = index
+const { optionHot, data } = defineProps<PropsHotType>()
+const tabActive = ref(optionHot![0])
+const activeIndex = (key: string) => {
+  tabActive.value = key
 }
-
 </script>
 
 <template>
   <div class="optionItem">
     <div class="optionHot">
       <h2>{{ data.title }} </h2>
-      <div class="optionHot-item" @click="activeIndex(index)" v-for="(item, index) in optionHot" :key="index">
-        <span :class="{ active: index == tabActive }">{{ item }}</span>
+      <div class="optionHot-item" @click="activeIndex(item)" v-for="(item, index) in optionHot" :key="index">
+        <span :class="{ active: item == tabActive }">{{ item }}</span>
       </div>
     </div>
     <div class="optionHotList">
-      <div class="hotitem" v-for="item in data.hotItems" :key="item.name">
-        <div class="img" :data-warp="item.wrap"><img :src="item.pic" alt=""></div>
-        <h4>{{ item.name }}</h4>
-        <p>{{ item.info }}</p>
+      <div class="hotitem" v-for="item in  data.hotItems[tabActive] " :key="item.title">
+        <div class="img" :data-warp="item.info">
+          <img :src="item.pic" alt="">
+        </div>
+        <h4>{{ item.title }}</h4>
+        <!-- <p>{{ item.desc }}</p> -->
       </div>
     </div>
   </div>
 </template>
 
-<style lang='scss' scoped>
+<style lang='scss'>
 h4 {
   margin: 0;
+  text-align: center;
 }
 
 h2 {
@@ -51,17 +53,14 @@ h2 {
 }
 
 .optionItem {
-  width: 90vw;
-  // border: 1px solid #ccc;
+  width: 100%;
+  height: auto;
   border-radius: 5px;
-  // padding: 10px;
-  // margin-bottom: 10px;
-  // box-shadow: inset 0 0 5px #ccc;
 }
 
 .optionHot {
   display: grid;
-  grid-template-columns: 150px repeat(7, 60px);
+  grid-template-columns: 150px repeat(10, 90px);
   gap: 10px;
   align-items: center;
   transition: .3s;
@@ -81,12 +80,15 @@ h2 {
 
 .optionHotList {
   display: flex;
+  justify-content: space-around;
   overflow-x: scroll;
   gap: 40px;
+  padding: 10px;
+  width: 99%;
 
   .hotitem {
     cursor: pointer;
-    width: 230px;
+    width: 120rem;
     // padding: 10px;
     padding-left: 0;
 
@@ -97,6 +99,7 @@ h2 {
         width: 100%;
         box-shadow: 0 20px 20px -5px rgba(250, 125, 227, 0.25), 14px 11px 11px -11px rgba(213, 228, 72, 0.3);
         border-radius: 10px;
+        border: 3px solid #000;
       }
 
       &::after {
