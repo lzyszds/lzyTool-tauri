@@ -33,7 +33,7 @@ const activeIndex = (key: string) => {
     <div class="optionHotList">
       <div class="hotitem" v-for="item in  data.hotItems[tabActive] " :key="item.title">
         <div class="img" :data-warp="item.info">
-          <img :src="item.pic" alt="">
+          <img v-lazy="500" :src="item.pic" alt="">
         </div>
         <h4>{{ item.title }}</h4>
         <!-- <p>{{ item.desc }}</p> -->
@@ -97,9 +97,10 @@ h2 {
 
       img {
         width: 100%;
+        height: 201px;
         box-shadow: 0 20px 20px -5px rgba(250, 125, 227, 0.25), 14px 11px 11px -11px rgba(213, 228, 72, 0.3);
         border-radius: 10px;
-        border: 3px solid #000;
+        border: 1px solid $black;
       }
 
       &::after {
@@ -129,7 +130,7 @@ h2 {
 
     &:hover {
       h4 {
-        color: $hoverColor;
+        color: --hoverColor;
       }
     }
   }
