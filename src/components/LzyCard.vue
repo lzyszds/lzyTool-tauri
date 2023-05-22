@@ -2,11 +2,12 @@
 import { defineProps } from "vue";
 import { ParsingType } from "@/types/parsingType"
 const { data } = defineProps<{ data: ParsingType }>();
+const isString = (val): boolean => typeof (val) !== 'string'
 </script>
 
 <template>
   <div class="card">
-    <div class="content" :style="{ backgroundImage: `url(${data.img})` }">
+    <div class="content" :style="{ backgroundImage: `url(${data.img ?? data.pic})` }">
       <div class="back">
         <div class="back-content">
           <svg stroke="#ffffff" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +20,7 @@ const { data } = defineProps<{ data: ParsingType }>();
               </path>
             </g>
           </svg>
-          <strong>Hover Me</strong>
+          <strong>{{ data.title }}</strong>
         </div>
       </div>
       <div class="front">
@@ -34,10 +35,12 @@ const { data } = defineProps<{ data: ParsingType }>();
         </div>
 
         <div class="front-content">
-          <small class="badge">{{ data.length ? data.length : '预告' }}</small>
+          <small class="badge">{{ data.length || data.info ? data.length || data.info : '预告' }}</small>
           <div class="description">
             <div class="card-footer">
-              <p v-for="(item, index) in data.desc" :key="index">{{ item.replace("\s", '') }}</p>
+              <p v-if="isString(data.desc)" v-for="(item, index) in data.desc" :key="index">{{ item.replace("\s", '') }}
+              </p>
+              <p v-else>{{ data.desc || '暂无介绍' }}</p>
             </div>
           </div>
         </div>

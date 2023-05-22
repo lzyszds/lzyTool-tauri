@@ -62,9 +62,14 @@ nextTick(() => { getList() })
         <div class="docname">{{ item.docname }}</div>
       </template>
     </el-autocomplete>
-    <ToBtn @click="getList"><i class="fa fa-search"></i></ToBtn>
+    <ElButton @click="getList" type="primary" style="margin: 0;">
+      <i class="fa fa-search"></i>
+    </ElButton>
     <ElButton @click="actions.setListShow()" type="primary" style="margin: 0;">
       <i class="fa fa-th-list"></i>
+    </ElButton>
+    <ElButton @click="actions.backHome" type="primary" style="margin: 0;">
+      <i class="fa fa-home"></i>
     </ElButton>
   </div>
 </template>
@@ -72,7 +77,7 @@ nextTick(() => { getList() })
 <style lang='scss' scoped>
 .header {
   display: grid;
-  grid-template-columns: 100px 50px 150px 1fr 200px 60px;
+  grid-template-columns: 100px 50px 150px 1fr repeat(3, 60px);
   gap: 10px;
   justify-content: space-between;
   align-items: center;

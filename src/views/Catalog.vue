@@ -6,10 +6,9 @@ import empty from "@/assets/images/empty.png";
 import LzyButton from '@/components/LzyButton.vue';
 import LzyCard from '@/components/LzyCard.vue';
 import useCounterStore from "@/store/store";
-const { state, actions } = useCounterStore()
-
 import { useRouter } from "vue-router";
 const router = useRouter()
+const { state, actions } = useCounterStore()
 
 // // 改变标签索引
 // const changeTabIndex = (index: number): void => {
@@ -28,7 +27,7 @@ const router = useRouter()
 const toLookVideo = (item, index): void => {
   state.activePlay = index
   const api = state.parsApi
-  router.push({ path: '/parsing/play', query: { url: analysis_Port[api] + item } })
+  router.push({ path: '/play', query: { url: analysis_Port[api] + item } })
   actions.setListShow(false)
   actions.setSearchShow(false)
   localStorage.setItem("store", JSON.stringify(state))

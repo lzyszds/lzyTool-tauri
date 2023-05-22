@@ -1,55 +1,9 @@
 <script setup lang='ts'>
-import http from "@/utils/http";
 import LzyCard from '@/components/LzyCard.vue';
 import useCounterStore from "@/store/store";
 const { state, actions } = useCounterStore()
 
 
-// 请求获取视频详情目录
-const lookUpItem = (item: any, key: number): void => {
-  actions.setV_loading(true)
-
-  try {
-    actions.resetCatalog() // 重置所有目录数据
-    // 更新详情数据
-    http({
-      url: `/getVideoUrl?url=${item.href}&type=${state.souritem}`,
-      method: 'GET',
-    }).then((res: any) => {
-      if (res.length == 0) {
-        return actions.setV_loading(false)
-      }
-      actions.setCatalogList(res)
-      const changeTabData = res.map(_res => {
-        return _res[0].title + '-' + _res[_res.length - 1].title
-      })
-      actions.setPagingTabDataList(changeTabData)
-      actions.setV_loading(false)
-      changeTabIndex(0)
-      localStorage.setItem("store", JSON.stringify(state))
-      actions.setListShow(true)
-    })
-  } catch (e) {
-    console.log(e);
-  } finally {
-    actions.setCatalogDetails(item)
-  }
-}
-// 改变标签索引
-const changeTabIndex = (index: number): void => {
-  // 设置当前指数
-  actions.setPagingTabIndex(index)
-  // 设置当前列表数据
-  const activeList = state.catalogList[index].map((item: any) => {
-    const isHerald = item.isNoStoreWatchHistory
-    return {
-      title: item.title,
-      href: item.href,
-      isNoStoreWatchHistory: isHerald == true ? '预告' : ''
-    }
-  })
-  actions.setPagingTabData(activeList)
-}
 </script>
 
 <template>
@@ -57,7 +11,7 @@ const changeTabIndex = (index: number): void => {
     <!-- 搜索结果列表  -->
     <div class="searchResList">
       <div class="searchResItem" v-for="(item, index) in state.searchData" :key="item.title">
-        <LzyCard @click="lookUpItem(item, index)" :data="item"></LzyCard>
+        <LzyCard @click="actions.lookUpItem(item, index)" :data="item"></LzyCard>
         <p class="title">{{ item.title }}</p>
       </div>
     </div>

@@ -15,7 +15,8 @@
       "all": true,
       "http": {
         "scope": [
-          "http://localhost:2000/tauri/*"
+          "http://localhost:2000/tauri/*",
+          "http://47.113.222.95:2000/tauri/*"
         ]
       }
     },

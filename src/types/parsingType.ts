@@ -1,9 +1,11 @@
 export interface ParsingType {
   href: string,
-  img: string,
+  img?: string,
+  pic?: string,
   title: string,
-  length: string,
-  desc: string[]
+  length?: string,
+  info?: string,
+  desc: string[] | string,
 }
 export interface ListArrType {
   fullTitle: string,

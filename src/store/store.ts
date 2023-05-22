@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { ParsingType, ListArrType, StoreType } from '@/types/parsingType'
+import http from "@/utils/http";
+import { router } from "@/utils/router";
 
 const defindState = {
   isListShow: false,//是否显示列表
@@ -63,7 +65,59 @@ const useCounterStore = defineStore('counter', () => {
       state.pagingTabIndex = 0
       state.pagingTabData = [] as ListArrType[]
     },
+    // 改变标签索引
+    changeTabIndex: (index?: number): void => {
+      index = index ? index : state.pagingTabIndex
+      // 设置当前指数
+      actions.setPagingTabIndex(index)
+      // 设置当前列表数据
+      const activeList = state.catalogList[index].map((item: any) => {
+        const isHerald = item.isNoStoreWatchHistory
+        return {
+          title: item.title,
+          href: item.href,
+          isNoStoreWatchHistory: isHerald == true ? '预告' : ''
+        }
+      })
+      actions.setPagingTabData(activeList)
+    },
+    // 请求获取视频详情目录
+    lookUpItem: (item: any, key: number): void => {
+      console.log(`lzy  item:`, item)
 
+      actions.setV_loading(true)
+      try {
+        actions.resetCatalog() // 重置所有目录数据
+        // 更新详情数据
+        http({
+          url: `/getVideoUrl?url=${item.href}&type=${state.souritem}`,
+          method: 'GET',
+        }).then((res: any) => {
+          if (res.length == 0) {
+            return actions.setV_loading(false)
+          }
+          actions.setCatalogList(res)
+          const changeTabData = res.map(_res => {
+            return _res[0].title + '-' + _res[_res.length - 1].title
+          })
+          actions.setPagingTabDataList(changeTabData)
+          actions.setV_loading(false)
+          actions.changeTabIndex() // 切换到第一个tab
+          localStorage.setItem("store", JSON.stringify(state))
+        })
+      } catch (e) {
+        console.log(e);
+      } finally {
+        actions.setCatalogDetails(item)
+        actions.setListShow(true)
+      }
+    },
+    /* 返回首页,并且重置所有路由存储 */
+    backHome: () => {
+      router.push('/')
+      actions.resetCatalog()
+      actions.setListShow(false)
+    }
   }
   return {
     state,

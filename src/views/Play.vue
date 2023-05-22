@@ -20,4 +20,7 @@ watch(() => {
 </template>
 
 <style lang='scss' scoped>
+.iframe {
+  height: 90vh;
+}
 </style>

@@ -1,6 +1,8 @@
 <script setup lang='ts'>
 import http from "@/utils/http";
 import { ref, defineProps } from "vue";
+import useCounterStore from "@/store/store";
+const { actions } = useCounterStore()
 interface PropsHotType {
   optionHot?: string[],
   data: {
@@ -31,7 +33,8 @@ const activeIndex = (key: string) => {
       </div>
     </div>
     <div class="optionHotList">
-      <div class="hotitem" v-for="item in  data.hotItems[tabActive] " :key="item.title">
+      <div class="hotitem" v-for="item in  data.hotItems[tabActive] " @click="actions.lookUpItem(item, item.title)"
+        :key="item.title">
         <div class="img" :data-warp="item.info">
           <img v-lazy="500" :src="item.pic" alt="">
         </div>

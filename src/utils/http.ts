@@ -1,12 +1,13 @@
-import { fetch, Body, ResponseType, } from "@tauri-apps/api/http";
+import {fetch, Body, ResponseType} from "@tauri-apps/api/http";
 import NProgress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css' // 引入样式
-import { IParams } from "@/types/shareType";
+import {IParams} from "@/types/shareType";
 // 简单配置
 NProgress.inc(0.4)
-NProgress.configure({ easing: 'ease', speed: 500, showSpinner: true })
+NProgress.configure({easing: 'ease', speed: 500, showSpinner: true})
 
-const api = 'http://localhost:2000/tauri'
+const api = 'http://47.113.222.95:2000/tauri'
+// const api = 'http://localhost:2000/tauri'
 
 
 // 2、封装请求方式
@@ -14,23 +15,19 @@ const api = 'http://localhost:2000/tauri'
 // @param url(必须)  接口地址
 // @param data(可选)  携带参数
 // @param headers(可选) 请求头可以自己设置，也可以使用默认的（不传）
-export default function ({ url, method, responseType, isDefind }: IParams) {
+export default function ({url, method, responseType, isDefind} : IParams) {
   NProgress.done()
   // 进度条开始
   NProgress.start()
 
-  const response = ResponseType[responseType!] || ResponseType.JSON
+  const response = ResponseType[responseType !] || ResponseType.JSON
   return new Promise((resolve, reject) => {
-    fetch((!isDefind ? api + url : url), { method, responseType: response })
-      .then(res => {
-        resolve(res.data)
-      })
-      .catch(err => {
-        reject(err)
-      })
-      .finally(() => {
-        // 进度条结束
-        NProgress.done()
-      })
+    fetch((!isDefind ? api + url : url), {method, responseType: response}).then(res => {
+      resolve(res.data)
+    }).catch(err => {
+      reject(err)
+    }). finally(() => { // 进度条结束
+      NProgress.done()
+    })
   })
 }
