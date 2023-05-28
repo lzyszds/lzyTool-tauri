@@ -67,8 +67,6 @@ Error You must change the bundle identifier in `tauri.conf.json > tauri > bundle
  <p> (注意AppData文件默认隐藏)(如果找不到tauri和WixTools文件，就自己创建)</p>
   <p>然后放在路径C盘/用户/当前账户/AppData/Local/tauri/WixTools</p>
   <p>把刚才下载的压缩包解压到WixTools里面</p>
-  <p>————————————————</p>
-  <p>版权声明：本文为CSDN博主「豪先生5」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。</p>
-  <p>原文链接：<https://blog.csdn.net/weixin_46171419/article/details/127937486>
+
 </p>
 </div>  
